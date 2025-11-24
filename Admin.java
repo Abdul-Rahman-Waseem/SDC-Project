@@ -15,7 +15,7 @@ public class Admin {
 
     /**
      * asim zohaib
-     * 
+     * adsfwdgh
      */
     private int adminId;
 
@@ -25,7 +25,7 @@ public class Admin {
     private String username;
 
     /**
-     * 
+     eqqeqeqw* grrtrd
      */
     private String password;
 
