@@ -1,0 +1,8 @@
+Booking.class
+Customer.class
+Report.class
+com\mycompany\sdc_project\resources\JakartaEE10Resource.class
+Room.class
+Payment.class
+Admin.class
+com\mycompany\sdc_project\JakartaRestConfiguration.class
