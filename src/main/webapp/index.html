@@ -1,10 +1,169 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Rock - Eco-Luxury Hotel</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Admin Login - Top Right */
+        .admin-corner {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .admin-btn {
+            background: #0D47A1; /* Deep blue */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(13,71,161,0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-btn:hover {
+            background: #1565C0;
+            transform: translateY(-3px);
+        }
+
+        /* Main Layout - Two Columns */
+        .container {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Left Side */
+        .left {
+            flex: 1;
+            padding-right: 60px;
+            text-align: left;
+            padding-left: 60px;
+        }
+
+        .hotel-name {
+            font-size: 70px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0D47A1, #42A5F5); /* Blue gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 24px;
+            color: #1A237E; /* Strong navy for contrast */
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 380px;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+            justify-content: center;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #1565C0, #42A5F5); /* Deep → Sky blue */
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #64B5F6, #1E88E5); /* Light → Medium blue */
+        }
+
+        .btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Right Side */
+        .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hotel-image {
+            width: 100%; 
+            max-width: 100%; 
+            height: 90%; 
+            object-fit: cover;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .container { flex-direction: column; padding: 40px 20px; text-align: center; }
+            .left { padding-right: 0; margin-bottom: 40px; text-align: center; }
+            .hotel-name { font-size: 55px; }
+            .btn-group { margin: 0 auto; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Admin Login -->
+    <div class="admin-corner">
+        <a href="adminLogin.jsp" class="admin-btn">
+            Admin Login
+        </a>
+    </div>
+
+    <div class="container">
+        <!-- Left: Customer Portal -->
+        <div class="left">
+            <h1 class="hotel-name">Blue Rock Hotel</h1>
+            <p class="tagline">Sustainable Luxury in the Sky</p>
+            <br>
+            <div class="btn-group">
+                <a href="customerLogin.jsp" class="btn btn-login">
+                    Customer Login
+                </a>
+                <a href="register.jsp" class="btn btn-register">
+                    Register as Customer
+                </a>
+            </div>
+        </div>
+
+        <!-- Right: Image -->
+        <div class="right">
+            <img src="images/hotle.jpg" alt="Hotel Image" class="hotel-image">
+        </div>
+    </div>
+
+</body>
 </html>
