@@ -163,7 +163,8 @@
         <div class="left">
             <div class="login-box">
                 <h2>Admin Login</h2>
-                <form action="AdminController?action=loginAdmin" method="post">
+                <form action="<%= request.getContextPath() %>/AdminController?action=loginAdmin" method="post">
+
                     <div class="form-group">
                         <label>Username</label>
                         <input type="text" name="username" placeholder="Enter username" required autofocus>
@@ -179,14 +180,14 @@
                     </button>
                 </form>
                 <div class="back-home">
-                    <a href="../">Back to Home</a>
+                    <a href="<%= request.getContextPath() %>/index.html">Back to Home</a>
                 </div>
             </div>
         </div>
 
         <!-- Right: Image -->
         <div class="right">
-            <img src="../images/reception.png" alt="Hotel Image" class="hotel-image">
+            <img src="<%= request.getContextPath() %>/images/reception.png" alt="Hotel Image" class="hotel-image">
         </div>
     </div>
 

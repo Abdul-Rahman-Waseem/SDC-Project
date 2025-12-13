@@ -1,3 +1,5 @@
+package com.mycompany.model;
+
 
 import java.io.*;
 import java.util.*;
