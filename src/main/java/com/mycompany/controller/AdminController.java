@@ -1,18 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.controller;
-
 /**
  *
  * @author look4
  */
-
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
+
+import com.mycompany.DAO.AdminDAO;
+import com.mycompany.model.Admin;
 
 @WebServlet("/AdminController")
 public class AdminController extends HttpServlet {
@@ -31,22 +28,21 @@ public class AdminController extends HttpServlet {
     private void loginAdmin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username").trim();
+        String password = request.getParameter("password").trim();
 
-        // TEMPORARY check (replace with DB later)
-        if ("admin".equals(username) && "123".equals(password)) {
+        AdminDAO dao = new AdminDAO();
+        Admin admin = dao.login(username, password);
 
-            // forward to dashboard
-            RequestDispatcher rd =
-                    request.getRequestDispatcher("/views/adminMain.jsp");
-            rd.forward(request, response);
-
+        if (admin != null) {
+            request.getSession().setAttribute("admin", admin);
+            request.getRequestDispatcher("/views/adminMain.jsp")
+                   .forward(request, response);
         } else {
             request.setAttribute("error", "Invalid username or password");
-            RequestDispatcher rd =
-                    request.getRequestDispatcher("/views/adminLogin.jsp");
-            rd.forward(request, response);
+            request.getRequestDispatcher("/views/adminLogin.jsp")
+                   .forward(request, response);
         }
     }
+    
 }
