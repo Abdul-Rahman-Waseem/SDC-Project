@@ -24,18 +24,18 @@
         }
 
     .register-box {
-    background: rgba(255, 255, 255, 0.25); /* semi-transparent */
-    -webkit-backdrop-filter: blur(10px); /* for Safari */
+    background: rgba(255, 255, 255, 0.25);
+    -webkit-backdrop-filter: blur(10px); 
     padding: 40px 50px;
     border-radius: 20px;
     width: 420px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.3); /* subtle border */
-    animation: fadeIn 1s ease-in-out; /* optional fade-in */
+    border: 1px solid rgba(255,255,255,0.3); 
+    animation: fadeIn 1s ease-in-out; 
 }
 
-/* Optional: smooth fade-in animation */
-@keyframes fadeIn {
+
+ @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
