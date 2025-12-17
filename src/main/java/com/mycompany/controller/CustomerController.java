@@ -8,11 +8,13 @@ import com.mycompany.model.Customer;
 import com.mycompany.model.Room;
 
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+@WebServlet("/CustomerController")
 public class CustomerController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -66,10 +68,11 @@ public class CustomerController extends HttpServlet {
 
   
         if (email.equals("test@gmail.com") && password.equals("123")) {
-            response.sendRedirect("views/searchRooms.jsp");
+           response.sendRedirect("views/customerDashboard.jsp");
+
         } else {
             request.setAttribute("error", "Invalid credentials");
-            request.getRequestDispatcher("views/customerLogin.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/customerLogin.jsp").forward(request, response);
         }
     }
 
