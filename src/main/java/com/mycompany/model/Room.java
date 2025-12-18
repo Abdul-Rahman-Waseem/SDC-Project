@@ -16,6 +16,7 @@ public class Room {
     private double pricePerNight;
     private String status;
     private String description;
+    private int adminId;
 
     public Room() {
     }
@@ -39,6 +40,6 @@ public class Room {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public void checkAvailability() { }
-    public void updateStatus() { }
+    public int getAdminId() { return adminId; }
+    public void setAdminId(int adminId) { this.adminId = adminId; }
 }

@@ -101,6 +101,6 @@ public class CustomerController extends HttpServlet {
         room.setDescription("Luxury room with sea view");
 
         request.setAttribute("room", room);
-        request.getRequestDispatcher("views/roomDetails.jsp").forward(request, response);
+        request.getRequestDispatcher("views/viewRoomDetails.jsp").forward(request, response);
     }
 }

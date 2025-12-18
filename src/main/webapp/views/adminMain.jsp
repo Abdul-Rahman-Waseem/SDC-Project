@@ -234,7 +234,7 @@
         <div class="sidebar">
             <h2>Management Options</h2>
             <ul>
-                <li><a href="<%= request.getContextPath() %>/admin/manageRooms.jsp">Manage Rooms</a></li>
+                <li><a href="${pageContext.request.contextPath}/views/manageRooms.jsp">Manage Rooms</a></li>
                 <li><a href="<%= request.getContextPath() %>/admin/manageBookings.jsp">Manage Bookings</a></li>
                 <li><a href="<%= request.getContextPath() %>/admin/manageCustomers.jsp">Manage Customers</a></li>
                 <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
@@ -287,10 +287,10 @@
                             <tr>
                                 <td>14</td>
                                 <td>15</td>
-                                <td class="current-day">16</td>
+                                <td>16</td>
                                 <td>17</td>
                                 <td>18</td>
-                                <td>19</td>
+                                <td class="current-day">19</td>
                                 <td>20</td>
                             </tr>
                             <tr>
