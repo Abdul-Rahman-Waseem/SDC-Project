@@ -9,72 +9,36 @@ import java.util.*;
  */
 public class Room {
 
-    /**
-     * Default constructor
-     */
+
+    private int roomId;
+    private String roomNumber;
+    private String roomType;
+    private double pricePerNight;
+    private String status;
+    private String description;
+
     public Room() {
     }
 
-    /**
-     * 
-     */
-    private int roomId;
+    // Getters and Setters
+    public int getRoomId() { return roomId; }
+    public void setRoomId(int roomId) { this.roomId = roomId; }
 
-    /**
-     * 
-     */
-    private String roomNumber;
+    public String getRoomNumber() { return roomNumber; }
+    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
 
-    /**
-     * 
-     */
-    private String roomType;
+    public String getRoomType() { return roomType; }
+    public void setRoomType(String roomType) { this.roomType = roomType; }
 
-    /**
-     * 
-     */
-    private double pricePerNight;
+    public double getPricePerNight() { return pricePerNight; }
+    public void setPricePerNight(double pricePerNight) { this.pricePerNight = pricePerNight; }
 
-    /**
-     * 
-     */
-    private String status;
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    /**
-     * 
-     */
-    private String description;
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-
-
-    /**
-     * 
-     */
-    public void checkAvailability() {
-        // TODO implement here
-    }
-
-    /**
-     * 
-     */
-    public void updateStatus() {
-        // TODO implement here
-    }
-
-    public void setDescription(String luxury_room_with_sea_view) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setRoomType(String deluxe) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setRoomNumber(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void setPricePerNight(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
+    public void checkAvailability() { }
+    public void updateStatus() { }
 }
