@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2025 at 08:01 PM
+-- Generation Time: Dec 20, 2025 at 08:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,11 +61,14 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`roomid`, `room_number`, `room_type`, `price`, `description`, `status`, `adminid`) VALUES
-(1, '202', 'Deluxe', 12000.00, 'Sea view with balcony', 'AVAILABLE', 1),
 (2, '101', 'Single', 5000.00, 'Cozy single room with city view', 'AVAILABLE', 1),
-(3, '102', 'Double', 7500.00, 'Spacious double room with WiFi and AC', 'AVAILABLE', 1),
 (4, '303', 'Suite', 18000.00, 'Luxury suite with lounge and minibar', 'AVAILABLE', 1),
-(5, '404', 'Family', 10000.00, 'Large family room with two beds', 'AVAILABLE', 1);
+(5, '404', 'Family', 10000.00, 'Large family room with two beds', 'AVAILABLE', 1),
+(24, '506', 'Single', 5000.00, 'Cozy single room with sea view', 'BOOKED', 1),
+(26, '606', 'Deluxe', 12000.00, 'Sea view with balcony', 'AVAILABLE', 1),
+(27, '103', 'Single', 5000.00, 'Cozy single room with city view', 'AVAILABLE', 1),
+(28, '104', 'Double', 7500.00, 'Spacious double room with WiFi and AC', 'BOOKED', 1),
+(29, '404', 'Suite', 19000.00, 'Luxury suite with lounge, minibar and balcony', 'AVAILABLE', 1);
 
 --
 -- Indexes for dumped tables
@@ -99,7 +102,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `roomid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `roomid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Constraints for dumped tables
