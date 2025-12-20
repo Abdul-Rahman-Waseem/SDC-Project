@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
 <%@page import="com.mycompany.model.Room"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -257,6 +258,7 @@
    
         <!-- Main Content -->
         <div class="main-content">
+            
             <div class="side-by-side">
                 <div class="dashboard-section">
                     <h2>Add New Room</h2>
@@ -280,8 +282,8 @@
                        
                         <label for="availability">Availability:</label>
                         <select id="availability" name="availability" required>
-                            <option value="Available">Available</option>
-                            <option value="Unavailable">Unavailable</option>
+                            <option value="AVAILABLE">Available</option>
+                            <option value="BOOKED">Booked</option>
                         </select>
                        
                         <button type="submit">Add Room</button>
@@ -294,7 +296,9 @@
                         Room room = (Room) request.getAttribute("roomToEdit");
                         if (room == null) {
                     %>
-                        <form class="add-room-form" action="<%= request.getContextPath() %>/AdminController?action=fetchRoomForEdit" method="get">
+                        <form class="add-room-form" action="<%= request.getContextPath() %>/AdminController" method="get">
+                            <input type="hidden" name="action" value="fetchRoomForEdit">
+
                             <label for="room_number">Room Number:</label>
                             <input type="text" id="room_number" name="room_number" required>
                             <button type="submit">Fetch Room</button>
@@ -327,15 +331,12 @@
                            
                             <label for="availability">Availability:</label>
                             <select id="availability" name="availability" required>
-                                <option value="Available" <%= "Available".equals(availability) ? "selected" : "" %>>Available</option>
-                                <option value="Unavailable" <%= "Unavailable".equals(availability) ? "selected" : "" %>>Unavailable</option>
+                                <option value="AVAILABLE" <%= "AVAILABLE".equals(availability) ? "selected" : "" %>>AVAILABLE</option>
+                                <option value="BOOKED" <%= "BOOKED".equals(availability) ? "selected" : "" %>>BOOKED</option>
                             </select>
                            
                             <button type="submit">Update Room</button>
                         </form>
-                        <div style="text-align: center; margin-top: 10px;">
-                            <a href="<%= request.getContextPath() %>/admin/manageRooms.jsp" style="color: #0D47A1; text-decoration: none; font-weight: bold;">Cancel</a>
-                        </div>
                     <% 
                         } 
                     %>
@@ -356,57 +357,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sample data - replace with dynamic data from database -->
-                        <tr>
-                            <td>101</td>
-                            <td>Single</td>
-                            <td>$100.00</td>
-                            <td>Cozy single room with basic amenities.</td>
-                            <td>Available</td>
-                            <td class="actions">
-                                <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=101" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>202</td>
-                            <td>Double</td>
-                            <td>$150.00</td>
-                            <td>Spacious double room with ocean view.</td>
-                            <td>Unavailable</td>
-                            <td class="actions">
-                                <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=202" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>303</td>
-                            <td>Suite</td>
-                            <td>$250.00</td>
-                            <td>Luxurious suite with balcony and jacuzzi.</td>
-                            <td>Available</td>
-                            <td class="actions">
-                                <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=303" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>104</td>
-                            <td>Deluxe</td>
-                            <td>$200.00</td>
-                            <td>Deluxe room with king bed and mini bar.</td>
-                            <td>Available</td>
-                            <td class="actions">
-                                <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=104" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>205</td>
-                            <td>Single</td>
-                            <td>$120.00</td>
-                            <td>Standard single room with city view.</td>
-                            <td>Unavailable</td>
-                            <td class="actions">
-                                <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=205" onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
-                            </td>
-                        </tr>
+                        <%
+                            List<Room> rooms = (List<Room>) request.getAttribute("rooms");
+
+                            if (rooms != null && !rooms.isEmpty()) {
+                                for (Room r : rooms) {
+                        %>
+                            <tr>
+                                <td><%= r.getRoomNumber() %></td>
+                                <td><%= r.getRoomType() %></td>
+                                <td><%= r.getPricePerNight() %></td>
+                                <td><%= r.getDescription() %></td>
+                                <td><%= r.getStatus() %></td>
+                                <td class="actions">
+                                    <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=<%= r.getRoomId() %>"
+                                       onclick="return confirm('Are you sure?');">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        <%
+                                }
+                            } else {
+                        %>
+                            <tr>
+                                <td colspan="6" style="text-align:center;">No rooms found</td>
+                            </tr>
+                        <%
+                            }
+                        %>
                     </tbody>
                 </table>
             </div>
