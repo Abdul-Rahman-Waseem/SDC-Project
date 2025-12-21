@@ -8,8 +8,10 @@ import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
 import com.mycompany.DAO.AdminDAO;
+import com.mycompany.DAO.CustomerDAO;
 import com.mycompany.DAO.RoomDAO;
 import com.mycompany.model.Admin;
+import com.mycompany.model.Customer;
 import com.mycompany.model.Room;
 import java.util.List;
 
@@ -31,6 +33,9 @@ public class AdminController extends HttpServlet {
         else if ("updateRoom".equals(action)) {
             updateRoom(request, response);
         }
+        else if ("addCustomer".equals(action)) {
+            addCustomer(request, response);
+        }
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,6 +49,10 @@ public class AdminController extends HttpServlet {
             deleteRoom(request, response);
         } else if ("fetchRoomForEdit".equals(action)) {
             fetchRoomForEdit(request, response); 
+        } else if ("manageCustomer".equals(action)) {
+            manageCustomer(request, response);
+        } else if ("deleteCustomer".equals(action)) {
+            deleteCustomer(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -192,6 +201,60 @@ public class AdminController extends HttpServlet {
             e.printStackTrace();
             request.getSession().setAttribute("error", "Error: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/AdminController?action=manageRooms");
+        }
+    }
+    
+    private void addCustomer(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+
+        Customer customer = new Customer(request.getParameter("name"),request.getParameter("email"),request.getParameter("password"));
+        
+        CustomerDAO dao = new CustomerDAO();
+        boolean success = dao.addCustomer(customer);
+
+        if (success) {
+            request.setAttribute("success", "Customer added successfully!");
+        } else {
+            request.setAttribute("error", "Failed to add customer. Try again.");
+        }
+        
+        response.sendRedirect(
+            request.getContextPath() + "/AdminController?action=manageCustomer"
+        );
+    }
+    
+    
+    private void manageCustomer(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        CustomerDAO dao = new CustomerDAO();
+        List<Customer> customerList = dao.getAllCustomer();
+
+        request.setAttribute("customers", customerList);
+        request.getRequestDispatcher("/views/manageCustomers.jsp")
+               .forward(request, response);
+    }
+    
+    private void deleteCustomer(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        CustomerDAO dao = new CustomerDAO();
+        try {
+            int Id = Integer.parseInt(request.getParameter("customerId"));
+            boolean success = dao.removeCustomer(Id);
+            if (success) {
+                request.getSession().setAttribute("success", "Customer deleted successfully!");
+            } else {
+                request.getSession().setAttribute("error", "Failed to delete Customer.");
+            }
+
+            response.sendRedirect(
+            request.getContextPath() + "/AdminController?action=manageCustomer"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Error: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/AdminController?action=manageCustomer");
         }
     }
 }

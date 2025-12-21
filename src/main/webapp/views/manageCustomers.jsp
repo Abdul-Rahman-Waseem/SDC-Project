@@ -1,21 +1,20 @@
-<%-- 
-    Document   : manageRooms
-    Created on : Dec 18, 2025, 11:08:13 PM
-    Author     : look4
+<%--
+    Document : manageCustomers
+    Created on : Dec 21, 2025, 12:00:00 AM
+    Author : look4
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
-<%@page import="com.mycompany.model.Room"%>
+<%@page import="com.mycompany.model.Customer"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Rooms - Blue Rock Hotel</title>
+    <title>Manage Customers - Blue Rock Hotel</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-   
+  
         body {
             font-family: Arial, sans-serif;
             height: 100vh;
@@ -23,7 +22,7 @@
             position: relative;
             background: #E3F2FD;
         }
-   
+  
         /* Header */
         .header {
             background: linear-gradient(135deg, #0D47A1, #42A5F5);
@@ -67,14 +66,14 @@
             box-shadow: 0 10px 20px rgba(21, 101, 192, 0.5);
             background: linear-gradient(135deg, #1976D2, #64B5F6);
         }
-   
+  
         /* Main Layout */
         .container {
             display: flex;
             height: calc(100vh - 40px); /* Adjusted for reduced header */
             margin-top: 40px; /* Adjusted for reduced header */
         }
-   
+  
         /* Sidebar */
         .sidebar {
             width: 280px;
@@ -115,7 +114,7 @@
             box-shadow: 0 4px 15px rgba(13, 71, 161, 0.2);
             color: white;
         }
-   
+  
         /* Main Content */
         .main-content {
             flex: 1;
@@ -142,24 +141,23 @@
             text-align: center;
         }
         /* Form Styles */
-        .add-room-form {
+        .add-customer-form {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            max-width: 600px;
             margin: 0 auto;
         }
-        .add-room-form label {
+        .add-customer-form label {
             font-weight: bold;
             color: #0D47A1;
         }
-        .add-room-form input, .add-room-form select, .add-room-form textarea {
+        .add-customer-form input, .add-customer-form select, .add-customer-form textarea {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
         }
-        .add-room-form button {
+        .add-customer-form button {
             padding: 12px;
             background: #0D47A1;
             color: white;
@@ -169,37 +167,37 @@
             font-size: 16px;
             transition: all 0.3s ease;
         }
-        .add-room-form button:hover {
+        .add-customer-form button:hover {
             background: #1976D2;
             transform: translateY(-2px);
         }
         /* Table */
-        .rooms-table {
+        .customers-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .rooms-table th, .rooms-table td {
+        .customers-table th, .customers-table td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
         }
-        .rooms-table th {
+        .customers-table th {
             background: #42A5F5;
             color: white;
         }
-        .rooms-table tr:nth-child(even) {
+        .customers-table tr:nth-child(even) {
             background: #E3F2FD;
         }
-        .rooms-table .actions a {
+        .customers-table .actions a {
             color: #0D47A1;
             text-decoration: none;
             margin-right: 10px;
             font-weight: bold;
         }
-        .rooms-table .actions a:hover {
+        .customers-table .actions a:hover {
             color: #1976D2;
         }
-   
+  
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -220,7 +218,6 @@
                 gap: 20px;
             }
         }
-
         /* Side by Side Layout */
         .side-by-side {
             display: flex;
@@ -237,7 +234,7 @@
 <body>
     <div class="header">
         <div class="header-left"></div>
-        <h1>Manage Rooms</h1>
+        <h1>Manage Customers</h1>
         <div class="header-right">
             <form action="<%= request.getContextPath() %>/AdminController?action=logout" method="post">
                 <button type="submit" class="logout-btn">Logout</button>
@@ -250,127 +247,56 @@
             <h2>Management Options</h2>
             <ul>
                 <li><a href="${pageContext.request.contextPath}/views/adminMain.jsp">Home Page</a></li>
-                <li><a href="<%= request.getContextPath() %>/views/manageBookings.jsp">Manage Bookings</a></li>
-                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageCustomer">Manage Customers</a></li>
-                <li><a href="<%= request.getContextPath() %>/views/generateReports.jsp">Generate Reports</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRooms">Manage Rooms</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRoom">Manage Bookings</a></li>
+                <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
             </ul>
         </div>
-   
+  
         <!-- Main Content -->
         <div class="main-content">
-            
+           
             <div class="side-by-side">
                 <div class="dashboard-section">
-                    <h2>Add New Room</h2>
-                    <form class="add-room-form" action="<%= request.getContextPath() %>/AdminController?action=addRoom" method="post">
-                        <label for="room_number">Room Number:</label>
-                        <input type="text" id="room_number" name="room_number" required>
-                       
-                        <label for="room_type">Room Type:</label>
-                        <select id="room_type" name="room_type" required>
-                            <option value="Single">Single</option>
-                            <option value="Double">Double</option>
-                            <option value="Suite">Suite</option>
-                            <option value="Deluxe">Deluxe</option>
-                        </select>
-                       
-                        <label for="price">Price per Night:</label>
-                        <input type="number" id="price" name="price" step="0.01" required>
-                       
-                        <label for="description">Description:</label>
-                        <textarea id="description" name="description" rows="4" required></textarea>
-                       
-                        <label for="availability">Availability:</label>
-                        <select id="availability" name="availability" required>
-                            <option value="AVAILABLE">Available</option>
-                            <option value="BOOKED">Booked</option>
-                        </select>
-                       
-                        <button type="submit">Add Room</button>
+                    <h2>Add New Customer</h2>
+                    <form class="add-customer-form" action="<%= request.getContextPath() %>/AdminController?action=addCustomer" method="post">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                      
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                      
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                      
+                        <button type="submit">Add Customer</button>
                     </form>
                 </div>
-
-                <div class="dashboard-section">
-                    <h2>Edit Room</h2>
-                    <% 
-                        Room room = (Room) request.getAttribute("roomToEdit");
-                        if (room == null) {
-                    %>
-                        <form class="add-room-form" action="<%= request.getContextPath() %>/AdminController" method="get">
-                            <input type="hidden" name="action" value="fetchRoomForEdit">
-
-                            <label for="room_number">Room Number:</label>
-                            <input type="text" id="room_number" name="room_number" required>
-                            <button type="submit">Fetch Room</button>
-                        </form>
-                    <% 
-                        } else {
-                            String roomNumber = room.getRoomNumber();
-                            String roomType = room.getRoomType();
-                            double price = room.getPricePerNight();
-                            String description = room.getDescription();
-                            String availability = room.getStatus();
-                    %>
-                        <form class="add-room-form" action="<%= request.getContextPath() %>/AdminController?action=updateRoom" method="post">
-                            <label for="room_number">Room Number:</label>
-                            <input type="text" id="room_number" name="room_number" value="<%= roomNumber %>" readonly required>
-                           
-                            <label for="room_type">Room Type:</label>
-                            <select id="room_type" name="room_type" required>
-                                <option value="Single" <%= "Single".equals(roomType) ? "selected" : "" %>>Single</option>
-                                <option value="Double" <%= "Double".equals(roomType) ? "selected" : "" %>>Double</option>
-                                <option value="Suite" <%= "Suite".equals(roomType) ? "selected" : "" %>>Suite</option>
-                                <option value="Deluxe" <%= "Deluxe".equals(roomType) ? "selected" : "" %>>Deluxe</option>
-                            </select>
-                           
-                            <label for="price">Price per Night:</label>
-                            <input type="number" id="price" name="price" step="0.01" value="<%= price %>" required>
-                           
-                            <label for="description">Description:</label>
-                            <textarea id="description" name="description" rows="4" required><%= description %></textarea>
-                           
-                            <label for="availability">Availability:</label>
-                            <select id="availability" name="availability" required>
-                                <option value="AVAILABLE" <%= "AVAILABLE".equals(availability) ? "selected" : "" %>>AVAILABLE</option>
-                                <option value="BOOKED" <%= "BOOKED".equals(availability) ? "selected" : "" %>>BOOKED</option>
-                            </select>
-                           
-                            <button type="submit">Update Room</button>
-                        </form>
-                    <% 
-                        } 
-                    %>
-                </div>
             </div>
-        
+       
             <div class="dashboard-section">
-                <h2>All Rooms</h2>
-                <table class="rooms-table">
+                <h2>All Customers</h2>
+                <table class="customers-table">
                     <thead>
                         <tr>
-                            <th>Room Number</th>
-                            <th>Type</th>
-                            <th>Price</th>
-                            <th>Description</th>
-                            <th>Availability</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <%
-                            List<Room> rooms = (List<Room>) request.getAttribute("rooms");
-
-                            if (rooms != null && !rooms.isEmpty()) {
-                                for (Room r : rooms) {
+                            List<Customer> customers = (List<Customer>) request.getAttribute("customers");
+                            if (customers != null && !customers.isEmpty()) {
+                                for (Customer c : customers) {
                         %>
                             <tr>
-                                <td><%= r.getRoomNumber() %></td>
-                                <td><%= r.getRoomType() %></td>
-                                <td><%= r.getPricePerNight() %></td>
-                                <td><%= r.getDescription() %></td>
-                                <td><%= r.getStatus() %></td>
+                                <td><%= c.getName() %></td>
+                                <td><%= c.getEmail() %></td>
+                                <td><%= c.getPassword() %></td>
                                 <td class="actions">
-                                    <a href="<%= request.getContextPath() %>/AdminController?action=deleteRoom&roomId=<%= r.getRoomId() %>"
+                                    <a href="<%= request.getContextPath() %>/AdminController?action=deleteCustomer&customerId=<%= c.getId() %>"
                                        onclick="return confirm('Are you sure?');">
                                         Delete
                                     </a>
@@ -381,7 +307,7 @@
                             } else {
                         %>
                             <tr>
-                                <td colspan="6" style="text-align:center;">No rooms found</td>
+                                <td colspan="4" style="text-align:center;">No customers found</td>
                             </tr>
                         <%
                             }

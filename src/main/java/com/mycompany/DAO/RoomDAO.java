@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * ADD THE NAME OF MEMBER FUNCTION YOU MADE AFTER YOUR NAME
- * @author ARW : addRoom(), getAllRooms(), removeRoom()
+ * @author ARW : addRoom(), getAllRooms(), removeRoom(), getRoomByNumber(), updateRoom()
  * @author hamza : 
  * @author asim :
  */
