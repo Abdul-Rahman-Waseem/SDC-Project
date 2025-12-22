@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2025 at 08:21 PM
+-- Generation Time: Dec 22, 2025 at 09:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,6 +39,29 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 (1, 'admin', '1234');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer`
+--
+
+CREATE TABLE `customer` (
+  `customerid` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`customerid`, `name`, `email`, `password`) VALUES
+(1, 'Abdul Rahman Waseem', 'look4rahman@gmail.com', 'test@123'),
+(2, 'Rahman', 'lookrahman@gmail.com', 'test@123'),
+(3, 'Abdul Rahman Waseem', 'look8rahman@gmail.com', 'test@123'),
+(4, 'AbdulRahman', 'look5rahman@gmail.com', 'test@123');
 
 -- --------------------------------------------------------
 
@@ -82,6 +105,13 @@ ALTER TABLE `admin`
   ADD UNIQUE KEY `username` (`username`);
 
 --
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`customerid`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- Indexes for table `room`
 --
 ALTER TABLE `room`
@@ -97,6 +127,12 @@ ALTER TABLE `room`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `customerid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `room`
