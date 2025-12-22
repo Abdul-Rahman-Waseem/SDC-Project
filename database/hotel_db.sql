@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 22, 2025 at 09:30 AM
+-- Generation Time: Dec 22, 2025 at 07:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,6 +39,35 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 (1, 'admin', '1234');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `booking`
+--
+
+CREATE TABLE `booking` (
+  `bookingid` int(11) NOT NULL,
+  `customerid` int(11) NOT NULL,
+  `roomid` int(11) NOT NULL,
+  `booking_date` date NOT NULL,
+  `check_in` date NOT NULL,
+  `check_out` date NOT NULL,
+  `total_price` decimal(10,0) NOT NULL,
+  `payment_method` enum('Online','Cash') NOT NULL,
+  `booking_status` enum('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`bookingid`, `customerid`, `roomid`, `booking_date`, `check_in`, `check_out`, `total_price`, `payment_method`, `booking_status`) VALUES
+(1, 1, 2, '2025-01-01', '2025-01-05', '2025-01-08', 15000, 'Cash', 'CONFIRMED'),
+(2, 2, 4, '2025-01-03', '2025-01-10', '2025-01-12', 36000, 'Cash', 'CONFIRMED'),
+(3, 3, 5, '2025-01-04', '2025-01-15', '2025-01-18', 30000, 'Online', 'CANCELLED'),
+(4, 4, 26, '2025-01-06', '2025-01-20', '2025-01-22', 24000, 'Cash', 'CONFIRMED'),
+(5, 1, 28, '2025-01-08', '2025-01-25', '2025-01-28', 22500, 'Online', 'CONFIRMED');
 
 -- --------------------------------------------------------
 
@@ -105,6 +134,14 @@ ALTER TABLE `admin`
   ADD UNIQUE KEY `username` (`username`);
 
 --
+-- Indexes for table `booking`
+--
+ALTER TABLE `booking`
+  ADD PRIMARY KEY (`bookingid`),
+  ADD KEY `fk_booking_customer` (`customerid`),
+  ADD KEY `fk_booking_room` (`roomid`);
+
+--
 -- Indexes for table `customer`
 --
 ALTER TABLE `customer`
@@ -129,6 +166,12 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `booking`
+--
+ALTER TABLE `booking`
+  MODIFY `bookingid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
@@ -143,6 +186,13 @@ ALTER TABLE `room`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `booking`
+--
+ALTER TABLE `booking`
+  ADD CONSTRAINT `fk_booking_customer` FOREIGN KEY (`customerid`) REFERENCES `customer` (`customerid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_booking_room` FOREIGN KEY (`roomid`) REFERENCES `room` (`roomid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room`
