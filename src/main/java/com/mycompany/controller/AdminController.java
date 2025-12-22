@@ -8,9 +8,11 @@ import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
 import com.mycompany.DAO.AdminDAO;
+import com.mycompany.DAO.BookingDAO;
 import com.mycompany.DAO.CustomerDAO;
 import com.mycompany.DAO.RoomDAO;
 import com.mycompany.model.Admin;
+import com.mycompany.model.Booking;
 import com.mycompany.model.Customer;
 import com.mycompany.model.Room;
 import java.util.List;
@@ -51,8 +53,14 @@ public class AdminController extends HttpServlet {
             fetchRoomForEdit(request, response); 
         } else if ("manageCustomer".equals(action)) {
             manageCustomer(request, response);
+        } else if ("manageBookings".equals(action)) {
+            manageBookings(request, response);
         } else if ("deleteCustomer".equals(action)) {
             deleteCustomer(request, response);
+        } else if ("confirmBooking".equals(action)) {
+            confirmBooking(request, response);
+        } else if ("cancelBooking".equals(action)) {
+            cancelBooking(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -257,4 +265,42 @@ public class AdminController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/AdminController?action=manageCustomer");
         }
     }
+    
+    private void manageBookings(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        BookingDAO dao = new BookingDAO();
+        List<Booking> bookingList = dao.getAllBookings();
+
+        request.setAttribute("bookings", bookingList);
+        request.getRequestDispatcher("/views/manageBookings.jsp")
+               .forward(request, response);
+    }
+    
+        private void confirmBooking(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+
+        BookingDAO dao = new BookingDAO();
+        dao.confirmBooking(bookingId);
+
+        response.sendRedirect(
+            request.getContextPath() + "/AdminController?action=manageBookings"
+        );
+    }
+
+    private void cancelBooking(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+
+        BookingDAO dao = new BookingDAO();
+        dao.cancelBooking(bookingId);
+
+        response.sendRedirect(
+            request.getContextPath() + "/AdminController?action=manageBookings"
+        );
+    }
+
 }

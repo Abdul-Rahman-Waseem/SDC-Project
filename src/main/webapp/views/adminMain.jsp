@@ -235,7 +235,7 @@
             <h2>Management Options</h2>
             <ul>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRooms">Manage Rooms</a></li>
-                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageCustomer">Manage Bookings</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageBookings">Manage Bookings</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageCustomer">Manage Customers</a></li>
                 <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
             </ul>

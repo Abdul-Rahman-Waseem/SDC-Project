@@ -248,7 +248,7 @@
             <ul>
                 <li><a href="${pageContext.request.contextPath}/views/adminMain.jsp">Home Page</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRooms">Manage Rooms</a></li>
-                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRoom">Manage Bookings</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageBookings">Manage Bookings</a></li>
                 <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
             </ul>
         </div>

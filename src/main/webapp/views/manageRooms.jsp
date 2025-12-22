@@ -250,7 +250,7 @@
             <h2>Management Options</h2>
             <ul>
                 <li><a href="${pageContext.request.contextPath}/views/adminMain.jsp">Home Page</a></li>
-                <li><a href="<%= request.getContextPath() %>/views/manageBookings.jsp">Manage Bookings</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=manageBookings">Manage Bookings</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageCustomer">Manage Customers</a></li>
                 <li><a href="<%= request.getContextPath() %>/views/generateReports.jsp">Generate Reports</a></li>
             </ul>
