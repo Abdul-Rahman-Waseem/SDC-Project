@@ -29,7 +29,7 @@
             color: white;
             padding: 10px 40px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             position: fixed;
@@ -37,34 +37,10 @@
             top: 0;
             z-index: 100;
         }
-        .header-left {
-            flex: 1;
-        }
         .header h1 {
             font-size: 20px;
             font-weight: 600;
             margin: 0;
-        }
-        .header-right {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-        }
-        .logout-btn {
-            padding: 8px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            background: #0D4791;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-        .logout-btn:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 10px 20px rgba(21, 101, 192, 0.5);
-            background: linear-gradient(135deg, #1976D2, #64B5F6);
         }
   
         /* Main Layout */
@@ -235,21 +211,15 @@
     <div class="header">
         <div class="header-left"></div>
         <h1>Manage Customers</h1>
-        <div class="header-right">
-            <form action="<%= request.getContextPath() %>/AdminController?action=logout" method="post">
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
-        </div>
     </div>
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
             <h2>Management Options</h2>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/views/adminMain.jsp">Home Page</a></li>
+                <li><a href="${pageContext.request.contextPath}/AdminController?action=dashboard">Home Page</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRooms">Manage Rooms</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageBookings">Manage Bookings</a></li>
-                <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
             </ul>
         </div>
   

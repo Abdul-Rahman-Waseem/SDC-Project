@@ -61,11 +61,37 @@ public class AdminController extends HttpServlet {
             confirmBooking(request, response);
         } else if ("cancelBooking".equals(action)) {
             cancelBooking(request, response);
+        }else if ("dashboard".equals(action)) {
+            showAdminDashboard(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
+    private void showAdminDashboard(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        RoomDAO roomDAO = new RoomDAO();
+
+        try {
+            int totalRooms = roomDAO.getTotalRooms();
+            int bookedRooms = roomDAO.getBookedRooms();
+            int unbookedRooms = totalRooms - bookedRooms;
+
+            request.setAttribute("totalRooms", totalRooms);
+            request.setAttribute("bookedRooms", bookedRooms);
+            request.setAttribute("unbookedRooms", unbookedRooms);
+
+            request.getRequestDispatcher("/views/adminMain.jsp")
+                   .forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
+        }
+    }
+
+    
     private void loginAdmin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -77,14 +103,14 @@ public class AdminController extends HttpServlet {
 
         if (admin != null) {
             request.getSession().setAttribute("admin", admin);
-            request.getRequestDispatcher("/views/adminMain.jsp")
-                   .forward(request, response);
+            response.sendRedirect(
+                request.getContextPath() + "/AdminController?action=dashboard"
+            );
         } else {
             request.setAttribute("error", "Invalid username or password");
             request.getRequestDispatcher("/views/adminLogin.jsp")
                    .forward(request, response);
         }
-        
     }
     
     private void addRoom(HttpServletRequest request, HttpServletResponse response) 
@@ -277,7 +303,7 @@ public class AdminController extends HttpServlet {
                .forward(request, response);
     }
     
-        private void confirmBooking(HttpServletRequest request, HttpServletResponse response)
+    private void confirmBooking(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         int bookingId = Integer.parseInt(request.getParameter("bookingId"));

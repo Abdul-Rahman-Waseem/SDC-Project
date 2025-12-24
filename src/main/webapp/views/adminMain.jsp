@@ -28,7 +28,7 @@
             color: white;
             padding: 10px 40px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             position: fixed;
@@ -36,34 +36,10 @@
             top: 0;
             z-index: 100;
         }
-        .header-left {
-            flex: 1;
-        }
         .header h1 {
             font-size: 20px;
             font-weight: 600;
             margin: 0;
-        }
-        .header-right {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-        }
-        .logout-btn {
-            padding: 8px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            background: #0D4791;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-        }
-        .logout-btn:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 10px 20px rgba(21, 101, 192, 0.5);
-            background: linear-gradient(135deg, #1976D2, #64B5F6);
         }
       
         /* Main Layout */
@@ -218,15 +194,14 @@
         }
     </style>
 </head>
+<%
+    int booked = (Integer) request.getAttribute("bookedRooms");
+    int unbooked = (Integer) request.getAttribute("unbookedRooms");
+%>
 <body>
     <div class="header">
         <div class="header-left"></div>
         <h1>Admin Dashboard</h1>
-        <div class="header-right">
-            <form action="<%= request.getContextPath() %>/AdminController?action=logout" method="post">
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
-        </div>
     </div>
   
     <div class="container">
@@ -237,7 +212,6 @@
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageRooms">Manage Rooms</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageBookings">Manage Bookings</a></li>
                 <li><a href="${pageContext.request.contextPath}/AdminController?action=manageCustomer">Manage Customers</a></li>
-                <li><a href="<%= request.getContextPath() %>/admin/generateReports.jsp">Generate Reports</a></li>
             </ul>
         </div>
       
@@ -317,63 +291,99 @@
             </div>
            
             <div class="dashboard-section">
-                <h2>Last 5 Bookings</h2>
-                <table class="bookings-table">
-                    <thead>
-                        <tr>
-                            <th>Booking ID</th>
-                            <th>Customer Name</th>
-                            <th>Room Number</th>
-                            <th>Check-in Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>001</td>
-                            <td>John Doe</td>
-                            <td>101</td>
-                            <td>2025-12-15</td>
-                            <td>Confirmed</td>
-                        </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>Jane Smith</td>
-                            <td>202</td>
-                            <td>2025-12-14</td>
-                            <td>Checked In</td>
-                        </tr>
-                        <tr>
-                            <td>003</td>
-                            <td>Alice Johnson</td>
-                            <td>303</td>
-                            <td>2025-12-13</td>
-                            <td>Confirmed</td>
-                        </tr>
-                        <tr>
-                            <td>004</td>
-                            <td>Bob Brown</td>
-                            <td>104</td>
-                            <td>2025-12-12</td>
-                            <td>Cancelled</td>
-                        </tr>
-                        <tr>
-                            <td>005</td>
-                            <td>Charlie Davis</td>
-                            <td>205</td>
-                            <td>2025-12-11</td>
-                            <td>Checked Out</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h2>How to Use the Admin Dashboard</h2>
+
+                <ul class="dashboard-guide">
+                    <li>
+                        <strong>View System Overview</strong>
+                        <ul>
+                            <li>Get a quick snapshot of recent system activity including bookings, rooms, and customers.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Monitor Recent Bookings</strong>
+                        <ul>
+                            <li>Review the latest bookings to stay updated on customer activity.</li>
+                            <li>Track booking statuses such as <b>Confirmed</b>, <b>Cancelled</b>, <b>Checked In</b>, and <b>Checked Out</b>.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Manage Rooms</strong>
+                        <ul>
+                            <li>Add new rooms to the system.</li>
+                            <li>Edit room details like room number, price, or availability.</li>
+                            <li>Remove rooms that are no longer in service.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Handle Bookings</strong>
+                        <ul>
+                            <li>Confirm pending bookings after verification.</li>
+                            <li>Cancel bookings when required.</li>
+                            <li>Ensure booking status updates correctly in real time.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Customer Tracking</strong>
+                        <ul>
+                            <li>View customer-related booking information.</li>
+                            <li>Use booking data to resolve customer queries efficiently.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Maintain System Accuracy</strong>
+                        <ul>
+                            <li>Regularly review records to ensure data consistency.</li>
+                            <li>Perform quick actions directly from the dashboard.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Secure Admin Operations</strong>
+                        <ul>
+                            <li>Only authorized administrators can access the dashboard.</li>
+                            <li>Always log out after completing administrative tasks.</li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
+
         </div>
     </div>
     <script>
-        // Sample data - replace with actual dynamic data
-        var booked = 70;
-        var unbooked = 30;
-       
+        var booked = <%= booked %>;
+        var unbooked = <%= unbooked %>;
+
+        var ctx = document.getElementById('roomPieChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Booked', 'Unbooked'],
+                datasets: [{
+                    data: [booked, unbooked],
+                    backgroundColor: ['#1565C0', '#BBDEFB'],
+                    borderColor: ['#FFFFFF', '#FFFFFF'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#0D47A1'
+                        }
+                    }
+                }
+            }
+        });
+        
         var ctx = document.getElementById('roomPieChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'pie',

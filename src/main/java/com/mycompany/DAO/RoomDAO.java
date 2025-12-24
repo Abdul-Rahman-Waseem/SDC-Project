@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * ADD THE NAME OF MEMBER FUNCTION YOU MADE AFTER YOUR NAME
- * @author ARW : addRoom(), getAllRooms(), removeRoom(), getRoomByNumber(), updateRoom()
+ * @author ARW : addRoom(), getAllRooms(), removeRoom(), getRoomByNumber(), updateRoom(), getTotalRooms(), getBookedRooms()
  * @author hamza : 
  * @author asim :
  */
@@ -127,4 +127,40 @@ public class RoomDAO {
         }
         return false;
     }
+    
+    public int getTotalRooms() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM room";
+        
+        try (Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        System.out.println(count);
+        return count;
+        
+    }
+
+    public int getBookedRooms() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM room WHERE status = 'BOOKED'";
+
+        try (Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        System.out.println(count);
+        return count;
+    }
+
 }

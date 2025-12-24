@@ -53,19 +53,12 @@ public class BookingDAO {
         String updateBooking =
             "UPDATE booking SET booking_status='CONFIRMED' WHERE bookingid=?";
 
-        String updateRoom =
-            "UPDATE room SET status='BOOKED' " +
-            "WHERE roomid = (SELECT roomid FROM booking WHERE bookingid=?)";
-
         try (Connection con = DBConnection.getConnection()) {
 
             PreparedStatement ps1 = con.prepareStatement(updateBooking);
             ps1.setInt(1, bookingId);
             ps1.executeUpdate();
 
-            PreparedStatement ps2 = con.prepareStatement(updateRoom);
-            ps2.setInt(1, bookingId);
-            ps2.executeUpdate();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,19 +70,11 @@ public class BookingDAO {
         String updateBooking =
             "UPDATE booking SET booking_status='CANCELLED' WHERE bookingid=?";
 
-        String updateRoom =
-            "UPDATE room SET status='AVAILABLE' " +
-            "WHERE roomid = (SELECT roomid FROM booking WHERE bookingid=?)";
-
         try (Connection con = DBConnection.getConnection()) {
 
             PreparedStatement ps1 = con.prepareStatement(updateBooking);
             ps1.setInt(1, bookingId);
             ps1.executeUpdate();
-
-            PreparedStatement ps2 = con.prepareStatement(updateRoom);
-            ps2.setInt(1, bookingId);
-            ps2.executeUpdate();
 
         } catch (Exception e) {
             e.printStackTrace();
