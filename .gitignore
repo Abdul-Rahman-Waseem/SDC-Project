@@ -1,1 +1,9 @@
-/target/
+# Maven
+target/
+
+# NetBeans
+nb-configuration.xml
+
+# Compiled files
+*.class
+*.war
