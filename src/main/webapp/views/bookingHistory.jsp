@@ -82,7 +82,7 @@
             if (bookings != null && !bookings.isEmpty()) {
                 for (Booking booking : bookings) {
 
-                    String status = booking.getBooking_status();
+                     String status = booking.getBooking_status();
                     String statusClass = "";
 
                     if ("CONFIRMED".equalsIgnoreCase(status)) statusClass = "status-confirmed";
@@ -139,7 +139,7 @@
 
         <div class="empty-state" style="grid-column: 1 / -1;">
             <h3>No Bookings Found</h3>
-            <p>You haven’t made any bookings yet.</p>
+            <p>You haven’t made any bookings yet</p>
         </div>
 
         <%

@@ -72,6 +72,7 @@
             <option value="PayPal">PayPal</option>
         </select>
 
+        
         <input type="submit" value="Add Booking">
     </form>
 
