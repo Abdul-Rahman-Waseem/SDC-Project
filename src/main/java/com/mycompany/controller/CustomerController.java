@@ -126,6 +126,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         request.getRequestDispatcher("views/bookingHistory.jsp")
                .forward(request, response);
     }
+
 private void addBooking(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
@@ -167,7 +168,6 @@ private void addBooking(HttpServletRequest request, HttpServletResponse response
         request.getRequestDispatcher("/views/addBooking.jsp").forward(request, response);
     }
 }
-
 
 }
 
