@@ -4,6 +4,6 @@ target/
 # NetBeans
 nb-configuration.xml
 
-# Compiled files
+# Compiled output
 *.class
 *.war
