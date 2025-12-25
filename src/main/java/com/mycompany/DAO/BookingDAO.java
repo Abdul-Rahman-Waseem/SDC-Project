@@ -15,39 +15,40 @@ import java.util.List;
  * @author asim :
  */
 public class BookingDAO {
-    public List<Booking> getAllBookings() {
+public List<Booking> getAllBookings() {
 
-        List<Booking> bookings = new ArrayList<>();
+    List<Booking> bookings = new ArrayList<>();
 
-        String sql = "    SELECT b.bookingid, b.booking_date, b.check_in, b.check_out,\n" + "           b.total_price, b.payment_method, b.booking_status,\n" + "           c.name AS customer_name,\n" + "           r.room_number\n" + "    FROM booking b\n" + "    JOIN customer c ON b.customerid = c.customerid\n" + "    JOIN room r ON b.roomid = r.roomid\n" + "    ORDER BY b.bookingid DESC\n";
+    String sql = "SELECT * FROM booking ORDER BY bookingid DESC";
 
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                Booking b = new Booking();
+        while (rs.next()) {
+            Booking b = new Booking();
+            b.setBookingId(rs.getInt("bookingid"));
+            b.setBooking_date(rs.getDate("booking_date"));
+            b.setCheck_in(rs.getDate("check_in"));
+            b.setCheck_out(rs.getDate("check_out"));
+            b.setTotal_price(rs.getDouble("total_price"));
+            b.setPayment_method(rs.getString("payment_method"));
+            b.setBooking_status(rs.getString("booking_status"));
 
-                b.setBookingId(rs.getInt("bookingid"));
-                b.setBooking_date(rs.getDate("booking_date"));
-                b.setCheck_in(rs.getDate("check_in"));
-                b.setCheck_out(rs.getDate("check_out"));
-                b.setTotal_price(rs.getDouble("total_price"));
-                b.setPayment_method(rs.getString("payment_method"));
-                b.setBooking_status(rs.getString("booking_status"));
-                // JOINED DATA
-                b.setCustomerName(rs.getString("customer_name"));
-                b.setRoomNumber(rs.getString("room_number"));
+            // Temporary display
+            b.setRoomNumber("Room ID " + rs.getInt("roomid"));
 
-                bookings.add(b);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            bookings.add(b);
         }
 
-        return bookings;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return bookings;
+}
+
+
     public void confirmBooking(int bookingId) {
 
         String updateBooking =
@@ -95,5 +96,30 @@ public class BookingDAO {
             e.printStackTrace();
         }
     }
+public boolean addBooking(Booking booking) {
+    String sql = "INSERT INTO booking (customerid, roomid, booking_date, check_in, check_out, total_price, payment_method, booking_status) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, booking.getCustomerid());
+        ps.setInt(2, booking.getRoomid());
+        ps.setDate(3, booking.getBooking_date());
+        ps.setDate(4, booking.getCheck_in());
+        ps.setDate(5, booking.getCheck_out());
+        ps.setDouble(6, booking.getTotal_price());
+        ps.setString(7, booking.getPayment_method());
+        ps.setString(8, booking.getBooking_status());
+
+        int rows = ps.executeUpdate();
+        return rows > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 
 }

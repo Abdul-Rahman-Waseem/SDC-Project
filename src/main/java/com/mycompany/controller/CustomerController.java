@@ -13,22 +13,29 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import com.mycompany.DAO.BookingDAO;
+import com.mycompany.model.Booking;
 
 @WebServlet("/CustomerController")
 public class CustomerController extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        String action = request.getParameter("action");
+    String action = request.getParameter("action");
 
-        if (action.equals("register")) {
-            registerCustomer(request, response);
-        }
-        else if (action.equals("login")) {
-            loginCustomer(request, response);
-        }
+    if ("addBooking".equals(action)) {
+        addBooking(request, response);
+    } else if ("register".equals(action)) {
+        registerCustomer(request, response);
+    } else if ("login".equals(action)) {
+        loginCustomer(request, response);
+    } else {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown action: " + action);
     }
+}
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,6 +48,10 @@ public class CustomerController extends HttpServlet {
         else if (action.equals("viewRoom")) {
             viewRoomDetails(request, response);
         }
+      if ("bookingHistory".equals(action)) {
+            showBookingHistory(request, response);
+        }
+
     }
 
 
@@ -103,4 +114,60 @@ public class CustomerController extends HttpServlet {
         request.setAttribute("room", room);
         request.getRequestDispatcher("views/viewRoomDetails.jsp").forward(request, response);
     }
+    private void showBookingHistory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        BookingDAO dao = new BookingDAO();
+        List<Booking> bookings = dao.getAllBookings();
+
+        System.out.println("Bookings fetched = " + bookings.size()); // DEBUG
+
+        request.setAttribute("bookings", bookings);
+        request.getRequestDispatcher("views/bookingHistory.jsp")
+               .forward(request, response);
+    }
+private void addBooking(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    try {
+        // ---- Dummy values ----
+        int customerId = 1;  // make sure this customer exists in your DB
+        int roomId = 101;    // make sure this room exists in your DB
+        java.sql.Date bookingDate = java.sql.Date.valueOf("2025-12-25");
+        java.sql.Date checkIn = java.sql.Date.valueOf("2025-12-26");
+        java.sql.Date checkOut = java.sql.Date.valueOf("2025-12-28");
+        double totalPrice = 1000;
+        String paymentMethod = "Cash";
+
+        Booking booking = new Booking();
+        booking.setCustomerid(customerId);
+        booking.setRoomid(roomId);
+        booking.setBooking_date(bookingDate);
+        booking.setCheck_in(checkIn);
+        booking.setCheck_out(checkOut);
+        booking.setTotal_price(totalPrice);
+        booking.setPayment_method(paymentMethod);
+        booking.setBooking_status("PENDING"); // default
+
+        BookingDAO dao = new BookingDAO();
+        boolean inserted = dao.addBooking(booking);
+
+        if (inserted) {
+            System.out.println("Dummy booking inserted successfully!");
+            response.sendRedirect(request.getContextPath() + "/CustomerController?action=bookingHistory");
+        } else {
+            System.out.println("Failed to insert dummy booking.");
+            request.setAttribute("error", "Failed to add booking.");
+            request.getRequestDispatcher("/views/addBooking.jsp").forward(request, response);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace(); // Important: See errors in server log
+        request.setAttribute("error", "Error: " + e.getMessage());
+        request.getRequestDispatcher("/views/addBooking.jsp").forward(request, response);
+    }
 }
+
+
+}
+
