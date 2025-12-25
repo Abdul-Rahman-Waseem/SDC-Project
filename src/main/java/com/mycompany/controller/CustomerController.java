@@ -114,6 +114,8 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         request.setAttribute("room", room);
         request.getRequestDispatcher("views/viewRoomDetails.jsp").forward(request, response);
     }
+    
+
     private void showBookingHistory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -126,7 +128,8 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         request.getRequestDispatcher("views/bookingHistory.jsp")
                .forward(request, response);
     }
-
+     
+    
 private void addBooking(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
