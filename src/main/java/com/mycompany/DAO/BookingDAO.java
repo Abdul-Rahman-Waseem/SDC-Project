@@ -2,109 +2,160 @@ package com.mycompany.DAO;
 
 import com.mycompany.db.DBConnection;
 import com.mycompany.model.Booking;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ADD THE NAME OF MEMBER FUNCTION YOU MADE AFTER YOUR NAME
- * @author ARW : confirmBooking(), getAllBookings()
- * @author hamza : 
- * @author asim :
- */
 public class BookingDAO {
-public List<Booking> getAllBookings() {
 
-    List<Booking> bookings = new ArrayList<>();
+    /* =======================
+       GET ALL BOOKINGS
+       ======================= */
+    public List<Booking> getAllBookings() {
 
-    String sql = "SELECT * FROM booking ORDER BY bookingid DESC";
+        List<Booking> bookings = new ArrayList<>();
 
-    try (Connection con = DBConnection.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        String sql =
+            "SELECT b.bookingid, b.customerid, b.roomid, b.booking_date, " +
+            "b.check_in, b.check_out, b.total_price, b.payment_method, " +
+            "b.booking_status, r.room_number " +
+            "FROM booking b " +
+            "LEFT JOIN room r ON b.roomid = r.roomid " +
+            "ORDER BY b.bookingid DESC";
 
-        while (rs.next()) {
-            Booking b = new Booking();
-            b.setBookingId(rs.getInt("bookingid"));
-            b.setBooking_date(rs.getDate("booking_date"));
-            b.setCheck_in(rs.getDate("check_in"));
-            b.setCheck_out(rs.getDate("check_out"));
-            b.setTotal_price(rs.getDouble("total_price"));
-            b.setPayment_method(rs.getString("payment_method"));
-            b.setBooking_status(rs.getString("booking_status"));
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-            // Temporary display
-            b.setRoomNumber("Room ID " + rs.getInt("roomid"));
+            while (rs.next()) {
 
-            bookings.add(b);
-        }
+                Booking b = new Booking();
+                b.setBookingId(rs.getInt("bookingid"));
+                b.setCustomerid(rs.getInt("customerid"));
+                b.setRoomid(rs.getInt("roomid"));
+                b.setBooking_date(rs.getDate("booking_date"));
+                b.setCheck_in(rs.getDate("check_in"));
+                b.setCheck_out(rs.getDate("check_out"));
+                b.setTotal_price(rs.getDouble("total_price"));
+                b.setPayment_method(rs.getString("payment_method"));
+                b.setBooking_status(rs.getString("booking_status"));
+                b.setRoomNumber(rs.getString("room_number"));
 
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+                bookings.add(b);
+            }
 
-    return bookings;
-}
-
-
-    public void confirmBooking(int bookingId) {
-
-        String updateBooking =
-            "UPDATE booking SET booking_status='CONFIRMED' WHERE bookingid=?";
-
-        try (Connection con = DBConnection.getConnection()) {
-
-            PreparedStatement ps1 = con.prepareStatement(updateBooking);
-            ps1.setInt(1, bookingId);
-            ps1.executeUpdate();
-
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return bookings;
     }
 
-    public void cancelBooking(int bookingId) {
+    /* =======================
+       CHECK IF ROOM EXISTS
+       ======================= */
+    public boolean roomExists(int roomId) {
 
-        String updateBooking =
-            "UPDATE booking SET booking_status='CANCELLED' WHERE bookingid=?";
+        String sql = "SELECT 1 FROM room WHERE roomid = ?";
 
-        try (Connection con = DBConnection.getConnection()) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            PreparedStatement ps1 = con.prepareStatement(updateBooking);
-            ps1.setInt(1, bookingId);
-            ps1.executeUpdate();
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-public boolean addBooking(Booking booking) {
-    String sql = "INSERT INTO booking (customerid, roomid, booking_date, check_in, check_out, total_price, payment_method, booking_status) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-    try (Connection con = DBConnection.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-
-        ps.setInt(1, booking.getCustomerid());
-        ps.setInt(2, booking.getRoomid());
-        ps.setDate(3, booking.getBooking_date());
-        ps.setDate(4, booking.getCheck_in());
-        ps.setDate(5, booking.getCheck_out());
-        ps.setDouble(6, booking.getTotal_price());
-        ps.setString(7, booking.getPayment_method());
-        ps.setString(8, booking.getBooking_status());
-
-        int rows = ps.executeUpdate();
-        return rows > 0;
-
-    } catch (Exception e) {
-        e.printStackTrace();
         return false;
     }
-}
 
+    /* =======================
+       ADD BOOKING (FIXED)
+       ======================= */
+    public boolean addBooking(Booking booking) {
 
+        // Prevent FK violation
+        if (!roomExists(booking.getRoomid())) {
+            System.out.println("❌ Room ID does not exist: " + booking.getRoomid());
+            return false;
+        }
+
+        String sql =
+            "INSERT INTO booking " +
+            "(customerid, roomid, booking_date, check_in, check_out, " +
+            "total_price, payment_method, booking_status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, booking.getCustomerid());
+            ps.setInt(2, booking.getRoomid());
+            ps.setDate(3, booking.getBooking_date());
+            ps.setDate(4, booking.getCheck_in());
+            ps.setDate(5, booking.getCheck_out());
+            ps.setDouble(6, booking.getTotal_price());
+            ps.setString(7, booking.getPayment_method());
+
+            // Default status if not set
+            ps.setString(8,
+                booking.getBooking_status() == null
+                    ? "PENDING"
+                    : booking.getBooking_status()
+            );
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            // SHOW REAL SQL ERROR
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /* =======================
+       CONFIRM BOOKING
+       ======================= */
+    public boolean confirmBooking(int bookingId) {
+
+        String sql =
+            "UPDATE booking SET booking_status = 'CONFIRMED' WHERE bookingid = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /* =======================
+       CANCEL BOOKING
+       ======================= */
+    public boolean cancelBooking(int bookingId) {
+
+        String sql =
+            "UPDATE booking SET booking_status = 'CANCELLED' WHERE bookingid = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
