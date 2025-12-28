@@ -66,7 +66,11 @@
 <div class="header">
     <h1>🏨 Blue Rock Hotel</h1>
     <div class="header-buttons">
-        <a href="<%= request.getContextPath() %>/views/customerMain.jsp" class="btn btn-secondary">Dashboard</a>
+        <a href="<%= request.getContextPath() %>/CustomerController?action=dashboard"
+   class="btn btn-secondary">
+    Dashboard
+</a>
+
         <a href="<%= request.getContextPath() %>/CustomerController?action=logout" class="btn btn-primary">Logout</a>
     </div>
 </div>
