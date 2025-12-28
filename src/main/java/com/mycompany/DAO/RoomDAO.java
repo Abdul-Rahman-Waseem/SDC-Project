@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * ADD THE NAME OF MEMBER FUNCTION YOU MADE AFTER YOUR NAME
  * @author ARW : addRoom(), getAllRooms(), removeRoom(), getRoomByNumber(), updateRoom(), getTotalRooms(), getBookedRooms()
- * @author hamza : 
+ * @author hamza : getAvailableRooms(), getAvailableRoomsByDateRange(), getRoomById()
  * @author asim :
  */
 public class RoomDAO {
@@ -161,6 +161,62 @@ public class RoomDAO {
             }
         System.out.println(count);
         return count;
+    }
+
+    // ✅ NEW METHOD: Get all available rooms
+  public List<Room> getAvailableRooms() {
+    List<Room> rooms = new ArrayList<>();
+    String sql = "SELECT * FROM room WHERE TRIM(UPPER(status)) = 'AVAILABLE' ORDER BY roomid";
+
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Room room = new Room();
+            room.setRoomId(rs.getInt("roomid"));
+            room.setRoomNumber(rs.getString("room_number"));
+            room.setRoomType(rs.getString("room_type"));
+            room.setPricePerNight(rs.getDouble("price"));
+            room.setStatus(rs.getString("status"));
+            room.setDescription(rs.getString("description"));
+            room.setAdminId(rs.getInt("adminid"));
+            rooms.add(room);
+        }
+
+        System.out.println("DAO: Available rooms fetched = " + rooms.size());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return rooms;
+}
+
+    // ✅ NEW METHOD: Get room by ID
+    public Room getRoomById(int roomId) {
+        Room room = null;
+        String sql = "SELECT * FROM room WHERE roomid = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    room = new Room();
+                    room.setRoomId(rs.getInt("roomid"));
+                    room.setRoomNumber(rs.getString("room_number"));
+                    room.setRoomType(rs.getString("room_type"));
+                    room.setPricePerNight(rs.getDouble("price"));
+                    room.setStatus(rs.getString("status"));
+                    room.setDescription(rs.getString("description"));
+                    room.setAdminId(rs.getInt("adminid"));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return room;
     }
 
 }
