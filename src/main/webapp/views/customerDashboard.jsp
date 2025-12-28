@@ -41,9 +41,20 @@
 <body>
     <div class="dashboard-box">
         <h2>Welcome, Customer!</h2>
+
         <a href="<%= request.getContextPath() %>/views/searchRooms.jsp">Search Rooms</a>
-        <a href="../CustomerController?action=viewBookings">My Bookings</a>
-        <a href="../CustomerController?action=logout">Logout</a>
+
+        <!-- ✅ ADD BOOKING BUTTON -->
+        <a href="<%= request.getContextPath() %>/CustomerController?action=showBookingForm">Add Booking</a>
+
+
+        <a href="<%= request.getContextPath() %>/CustomerController?action=viewBookings">
+            My Bookings
+        </a>
+
+        <a href="<%= request.getContextPath() %>/CustomerController?action=logout">
+            Logout
+        </a>
     </div>
 </body>
 </html>
