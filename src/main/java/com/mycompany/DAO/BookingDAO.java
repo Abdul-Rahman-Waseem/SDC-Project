@@ -19,30 +19,24 @@ public class BookingDAO {
 
         List<Booking> bookings = new ArrayList<>();
 
-        String sql =
-            "SELECT b.bookingid, b.customerid, b.roomid, b.booking_date, " +
-            "b.check_in, b.check_out, b.total_price, b.payment_method, " +
-            "b.booking_status, r.room_number " +
-            "FROM booking b " +
-            "LEFT JOIN room r ON b.roomid = r.roomid " +
-            "ORDER BY b.bookingid DESC";
+        String sql = "    SELECT b.bookingid, b.booking_date, b.check_in, b.check_out,\n" + "           b.total_price, b.payment_method, b.booking_status,\n" + "           c.name AS customer_name,\n" + "           r.room_number\n" + "    FROM booking b\n" + "    JOIN customer c ON b.customerid = c.customerid\n" + "    JOIN room r ON b.roomid = r.roomid\n" + "    ORDER BY b.bookingid DESC\n";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-
                 Booking b = new Booking();
+
                 b.setBookingId(rs.getInt("bookingid"));
-                b.setCustomerid(rs.getInt("customerid"));
-                b.setRoomid(rs.getInt("roomid"));
                 b.setBooking_date(rs.getDate("booking_date"));
                 b.setCheck_in(rs.getDate("check_in"));
                 b.setCheck_out(rs.getDate("check_out"));
                 b.setTotal_price(rs.getDouble("total_price"));
                 b.setPayment_method(rs.getString("payment_method"));
                 b.setBooking_status(rs.getString("booking_status"));
+                // JOINED DATA
+                b.setCustomerName(rs.getString("customer_name"));
                 b.setRoomNumber(rs.getString("room_number"));
 
                 bookings.add(b);

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class CustomerDAO {
 
-    // ✅ Add a new customer
+    // Add a new customer
     public boolean addCustomer(Customer customer) {
         String sql = "INSERT INTO customer (name, email, password) VALUES (?, ?, ?)";
         try (Connection con = DBConnection.getConnection();
@@ -59,7 +59,7 @@ public class CustomerDAO {
         return customers;
     }
 
-    // ✅ Remove a customer by ID
+    // Remove a customer by ID
     public boolean removeCustomer(int customerId) {
         String sql = "DELETE FROM customer WHERE customerid=?";
         try (Connection con = DBConnection.getConnection();
