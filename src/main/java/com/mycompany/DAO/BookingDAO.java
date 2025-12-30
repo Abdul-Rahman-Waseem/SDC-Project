@@ -19,7 +19,14 @@ public class BookingDAO {
 
         List<Booking> bookings = new ArrayList<>();
 
-        String sql = "    SELECT b.bookingid, b.booking_date, b.check_in, b.check_out,\n" + "           b.total_price, b.payment_method, b.booking_status,\n" + "           c.name AS customer_name,\n" + "           r.room_number\n" + "    FROM booking b\n" + "    JOIN customer c ON b.customerid = c.customerid\n" + "    JOIN room r ON b.roomid = r.roomid\n" + "    ORDER BY b.bookingid DESC\n";
+        String sql = "SELECT b.bookingid, b.booking_date, b.check_in, b.check_out, " +
+                     "       b.total_price, b.payment_method, b.booking_status, " +
+                     "       c.name AS customer_name, " +
+                     "       r.room_number " +
+                     "FROM booking b " +
+                     "JOIN customer c ON b.customerid = c.customerid " +
+                     "JOIN room r ON b.roomid = r.roomid " +
+                     "ORDER BY b.bookingid DESC";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -151,5 +158,114 @@ public class BookingDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /* =======================
+       GET BOOKINGS BY CUSTOMER ID
+       ======================= */
+    public List<Booking> getBookingsByCustomerId(int customerId) {
+        
+        List<Booking> bookings = new ArrayList<>();
+        
+        String sql = "SELECT b.bookingid, b.booking_date, b.check_in, b.check_out, " +
+                     "       b.total_price, b.payment_method, b.booking_status, " +
+                     "       c.name AS customer_name, " +
+                     "       r.room_number " +
+                     "FROM booking b " +
+                     "JOIN customer c ON b.customerid = c.customerid " +
+                     "JOIN room r ON b.roomid = r.roomid " +
+                     "WHERE b.customerid = ? " +
+                     "ORDER BY b.bookingid DESC";
+        
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, customerId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Booking b = new Booking();
+                    
+                    b.setBookingId(rs.getInt("bookingid"));
+                    b.setBooking_date(rs.getDate("booking_date"));
+                    b.setCheck_in(rs.getDate("check_in"));
+                    b.setCheck_out(rs.getDate("check_out"));
+                    b.setTotal_price(rs.getDouble("total_price"));
+                    b.setPayment_method(rs.getString("payment_method"));
+                    b.setBooking_status(rs.getString("booking_status"));
+                    // JOINED DATA
+                    b.setCustomerName(rs.getString("customer_name"));
+                    b.setRoomNumber(rs.getString("room_number"));
+                    
+                    bookings.add(b);
+                }
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return bookings;
+    }
+
+    /* =======================
+       DELETE SINGLE BOOKING
+       (WITH CUSTOMER OWNERSHIP VERIFICATION)
+       ======================= */
+    public boolean deleteBooking(int bookingId, int customerId) {
+        
+        String sql = "DELETE FROM booking WHERE bookingid = ? AND customerid = ?";
+        
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, bookingId);
+            ps.setInt(2, customerId);
+            
+            int rowsAffected = ps.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("✅ Booking " + bookingId + " deleted successfully");
+                return true;
+            } else {
+                System.out.println("❌ Failed to delete booking " + bookingId + 
+                                   " (either doesn't exist or doesn't belong to customer " + customerId + ")");
+                return false;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("❌ SQL Error while deleting booking:");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /* =======================
+       DELETE ALL CANCELLED BOOKINGS FOR A CUSTOMER
+       ======================= */
+    public int deleteCancelledBookings(int customerId) {
+        
+        String sql = "DELETE FROM booking WHERE customerid = ? AND booking_status = 'CANCELLED'";
+        
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, customerId);
+            
+            int rowsAffected = ps.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("✅ Deleted " + rowsAffected + " cancelled booking(s) for customer " + customerId);
+            } else {
+                System.out.println("ℹ️ No cancelled bookings found for customer " + customerId);
+            }
+            
+            return rowsAffected;
+            
+        } catch (SQLException e) {
+            System.err.println("❌ SQL Error while deleting cancelled bookings:");
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
