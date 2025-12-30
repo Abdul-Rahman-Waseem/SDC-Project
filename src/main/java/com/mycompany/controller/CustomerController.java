@@ -71,7 +71,15 @@ public class CustomerController extends HttpServlet {
             case "showBookingForm":
                 showBookingForm(request, response);
                 break;
-                
+            case "cancelBooking":
+                cancelBooking(request, response);
+                break;
+            case "deleteBooking":
+                deleteBooking(request, response);
+                break;
+            case "clearCancelledBookings":
+                clearCancelledBookings(request, response);
+                break;
             case "logout":
                 request.getSession().invalidate();
                 response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
@@ -165,12 +173,153 @@ public class CustomerController extends HttpServlet {
     private void viewBookingHistory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Booking> bookings = bookingDAO.getAllBookings();
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
+            return;
+        }
+
+        // Get logged-in customer from session
+        Customer loggedInCustomer = (Customer) session.getAttribute("customer");
+        int customerId = loggedInCustomer.getId();
+        
+        // Fetch only THIS customer's bookings
+        List<Booking> bookings = bookingDAO.getBookingsByCustomerId(customerId);
+        
         request.setAttribute("bookings", bookings);
         request.getRequestDispatcher("/views/bookingHistory.jsp").forward(request, response);
     }
 
-    // ✅ NEW: Show Booking Form
+    // ======= Cancel Booking =======
+    private void cancelBooking(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
+            return;
+        }
+
+        try {
+            // Get booking ID from request
+            int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+            
+            // Get logged-in customer
+            Customer loggedInCustomer = (Customer) session.getAttribute("customer");
+            int customerId = loggedInCustomer.getId();
+            
+            // Verify this booking belongs to the logged-in customer (security check)
+            if (isBookingOwnedByCustomer(bookingId, customerId)) {
+                // Cancel the booking (calls BookingDAO method)
+                boolean cancelled = bookingDAO.cancelBooking(bookingId);
+                
+                if (cancelled) {
+                    session.setAttribute("success", "Booking cancelled successfully! Room is now available for rebooking.");
+                } else {
+                    session.setAttribute("error", "Failed to cancel booking. Please try again.");
+                }
+            } else {
+                session.setAttribute("error", "You can only cancel your own bookings.");
+            }
+            
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            session.setAttribute("error", "Invalid booking ID.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("error", "An error occurred while cancelling the booking.");
+        }
+        
+        // Redirect back to booking history
+        response.sendRedirect(request.getContextPath() + "/CustomerController?action=bookingHistory");
+    }
+
+    // ======= Delete Single Booking =======
+    private void deleteBooking(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
+            return;
+        }
+
+        try {
+            // Get booking ID from request
+            int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+            
+            // Get logged-in customer
+            Customer loggedInCustomer = (Customer) session.getAttribute("customer");
+            int customerId = loggedInCustomer.getId();
+            
+            // Delete the booking (DAO method verifies ownership)
+            boolean deleted = bookingDAO.deleteBooking(bookingId, customerId);
+            
+            if (deleted) {
+                session.setAttribute("success", "Booking deleted successfully!");
+            } else {
+                session.setAttribute("error", "Failed to delete booking. Please try again.");
+            }
+            
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            session.setAttribute("error", "Invalid booking ID.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("error", "An error occurred while deleting the booking.");
+        }
+        
+        // Redirect back to booking history
+        response.sendRedirect(request.getContextPath() + "/CustomerController?action=bookingHistory");
+    }
+
+    // ======= Clear All Cancelled Bookings =======
+    private void clearCancelledBookings(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("customer") == null) {
+            response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
+            return;
+        }
+
+        try {
+            // Get logged-in customer
+            Customer loggedInCustomer = (Customer) session.getAttribute("customer");
+            int customerId = loggedInCustomer.getId();
+            
+            // Delete all cancelled bookings for this customer
+            int deletedCount = bookingDAO.deleteCancelledBookings(customerId);
+            
+            if (deletedCount > 0) {
+                session.setAttribute("success", deletedCount + " cancelled booking(s) cleared successfully!");
+            } else {
+                session.setAttribute("error", "No cancelled bookings found to delete.");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("error", "An error occurred while clearing cancelled bookings.");
+        }
+        
+        // Redirect back to booking history
+        response.sendRedirect(request.getContextPath() + "/CustomerController?action=bookingHistory");
+    }
+
+    // ======= Helper: Check if booking belongs to customer =======
+    private boolean isBookingOwnedByCustomer(int bookingId, int customerId) {
+        // Get customer's bookings and check if this booking ID exists
+        List<Booking> customerBookings = bookingDAO.getBookingsByCustomerId(customerId);
+        
+        for (Booking booking : customerBookings) {
+            if (booking.getBookingId() == bookingId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ======= Show Booking Form =======
     private void showBookingForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -191,16 +340,16 @@ public class CustomerController extends HttpServlet {
         request.getRequestDispatcher("/views/addBooking.jsp").forward(request, response);
     }
 
-    // ✅ UPDATED: Add Booking
+    // ======= Add Booking =======
     private void addBooking(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
+            throws ServletException, IOException {
+        
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("customer") == null) {
             response.sendRedirect(request.getContextPath() + "/views/customerLogin.jsp");
             return;
         }
-
+        
         try {
             // Get logged-in customer ID from session
             Customer loggedInCustomer = (Customer) session.getAttribute("customer");
@@ -209,12 +358,12 @@ public class CustomerController extends HttpServlet {
             // Get booking parameters from form
             int roomId = Integer.parseInt(request.getParameter("roomId"));
             String paymentMethod = request.getParameter("paymentMethod");
-
+            
             // Validate payment method
             if (!paymentMethod.equals("Online") && !paymentMethod.equals("Cash")) {
                 throw new Exception("Invalid payment method");
             }
-
+            
             // Parse dates
             java.sql.Date bookingDate = new java.sql.Date(System.currentTimeMillis());
             java.sql.Date checkIn = java.sql.Date.valueOf(request.getParameter("checkIn"));
@@ -227,7 +376,7 @@ public class CustomerController extends HttpServlet {
             if (checkOut.before(checkIn) || checkOut.equals(checkIn)) {
                 throw new Exception("Check-out date must be after check-in date");
             }
-
+            
             // Fetch room to get price and validate availability
             Room room = roomDAO.getRoomById(roomId);
             if (room == null) {
@@ -236,11 +385,11 @@ public class CustomerController extends HttpServlet {
             if (!room.getStatus().equals("AVAILABLE")) {
                 throw new Exception("Selected room is no longer available");
             }
-
+            
             // Calculate total price
             long days = (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24);
             double totalPrice = days * room.getPricePerNight();
-
+            
             // Create booking object
             Booking booking = new Booking();
             booking.setCustomerid(customerId);
@@ -251,17 +400,17 @@ public class CustomerController extends HttpServlet {
             booking.setTotal_price(totalPrice);
             booking.setPayment_method(paymentMethod);
             booking.setBooking_status("PENDING");
-
-            // Insert booking into database
+            
+            // Insert booking into database (this now also updates room status to BOOKED)
             boolean inserted = bookingDAO.addBooking(booking);
-
+            
             if (inserted) {
-                session.setAttribute("success", "Booking created successfully!");
+                session.setAttribute("success", "Booking created successfully! Room has been reserved.");
                 response.sendRedirect(request.getContextPath() + "/CustomerController?action=bookingHistory");
             } else {
-                throw new Exception("Failed to create booking. Please try again.");
+                throw new Exception("Failed to create booking. The room may no longer be available. Please try again.");
             }
-
+            
         } catch (NumberFormatException e) {
             e.printStackTrace();
             List<Room> availableRooms = roomDAO.getAvailableRooms();
