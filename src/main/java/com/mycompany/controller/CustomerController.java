@@ -7,9 +7,9 @@ import com.mycompany.model.Booking;
 import com.mycompany.model.Customer;
 import com.mycompany.model.Room;
 
-import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
